@@ -1,0 +1,38 @@
+/* XTerminal — styles for the xterm.js container */
+
+.xterm-container {
+  width: 100%;
+  height: 100%;
+  background: #08080f;
+  padding: 6px 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Make the xterm viewport fill the container */
+.xterm-container .xterm {
+  height: 100%;
+}
+
+.xterm-container .xterm-viewport {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #3d3d5c #08080f;
+}
+
+.xterm-container .xterm-viewport::-webkit-scrollbar {
+  width: 6px;
+}
+
+.xterm-container .xterm-viewport::-webkit-scrollbar-track {
+  background: #08080f;
+}
+
+.xterm-container .xterm-viewport::-webkit-scrollbar-thumb {
+  background: #3d3d5c;
+  border-radius: 3px;
+}
+
+.xterm-container .xterm-viewport::-webkit-scrollbar-thumb:hover {
+  background: #6c5ce7;
+}

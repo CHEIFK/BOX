@@ -7,13 +7,7 @@
     "core:default",
     "opener:default",
     "core:event:default",
-    "core:window:allow-emit-to",
-    "dialog:allow-open",
-    "fs:allow-read-dir",
-    "fs:allow-read-file",
-    "fs:allow-write-file",
-    "fs:allow-stat",
-    "fs:scope-home-recursive",
-    "fs:scope-app-recursive"
+    "core:event:allow-emit-to",
+    "dialog:allow-open"
   ]
 }

@@ -1,0 +1,50 @@
+/* TerminalTabs — the horizontal tab bar at the top of the terminal panel */
+
+.terminal-tabs {
+  display: flex;
+  align-items: stretch;
+  height: 36px;
+  background: #0a0a1a;
+  border-bottom: 1px solid #1a1a2e;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-shrink: 0;
+  scrollbar-width: none; /* hide the thin scrollbar on the tab strip */
+}
+
+.terminal-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.terminal-tabs__add {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-right: 1px solid #1a1a2e;
+  color: #8888aa;
+  font-size: 20px;
+  line-height: 36px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.terminal-tabs__add:hover {
+  background: #14142a;
+  color: #6c5ce7;
+}
+
+.terminal-tabs__add:focus-visible {
+  outline: 2px solid #6c5ce7;
+  outline-offset: -2px;
+}
+
+.terminal-tabs__spacer {
+  flex: 1;
+  min-width: 0;
+}

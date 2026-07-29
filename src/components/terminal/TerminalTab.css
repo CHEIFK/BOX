@@ -1,0 +1,96 @@
+/* TerminalTab — individual tab in the terminal tab bar */
+
+.terminal-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px 0 12px;
+  height: 36px;
+  min-width: 100px;
+  max-width: 180px;
+  background: transparent;
+  border-right: 1px solid #1a1a2e;
+  cursor: pointer;
+  color: #8888aa;
+  font-size: 12px;
+  font-family: inherit;
+  user-select: none;
+  transition: background 0.15s ease, color 0.15s ease;
+  position: relative;
+  outline: none;
+}
+
+.terminal-tab:hover {
+  background: #14142a;
+  color: #c0c0d8;
+}
+
+.terminal-tab:focus-visible {
+  outline: 2px solid #6c5ce7;
+  outline-offset: -2px;
+}
+
+.terminal-tab--active {
+  background: #0d0d1f;
+  color: #e8e8f0;
+  border-bottom: 2px solid #6c5ce7;
+}
+
+.terminal-tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #6c5ce7;
+}
+
+.terminal-tab__icon {
+  font-size: 10px;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.terminal-tab--active .terminal-tab__icon {
+  opacity: 1;
+  color: #6c5ce7;
+}
+
+.terminal-tab__title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.terminal-tab__close {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  margin-left: 2px;
+  background: transparent;
+  border: none;
+  border-radius: 3px;
+  color: inherit;
+  font-size: 16px;
+  line-height: 18px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.terminal-tab:hover .terminal-tab__close,
+.terminal-tab--active .terminal-tab__close {
+  opacity: 0.6;
+}
+
+.terminal-tab__close:hover {
+  opacity: 1 !important;
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+}
