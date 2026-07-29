@@ -1,0 +1,129 @@
+/* FileTreeNode — individual tree row */
+
+.file-tree-node {
+  list-style: none;
+}
+
+.file-tree-node__row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  cursor: pointer;
+  border-radius: 0;
+  transition: background var(--transition);
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+  padding-right: 8px;
+}
+
+.file-tree-node__row:hover {
+  background: var(--bg-hover);
+}
+
+.file-tree-node__row:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.file-tree-node__row--match {
+  background: rgba(108, 92, 231, 0.08);
+}
+
+.file-tree-node__row--match:hover {
+  background: rgba(108, 92, 231, 0.15);
+}
+
+.file-tree-node__chevron {
+  font-size: 9px;
+  width: 12px;
+  text-align: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.file-tree-node__chevron-spacer {
+  width: 12px;
+  flex-shrink: 0;
+}
+
+.file-tree-node__icon {
+  font-size: 13px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.file-tree-node__name {
+  font-size: 12.5px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.file-tree-node__loading {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.file-tree-node__mark {
+  background: rgba(108, 92, 231, 0.4);
+  color: var(--text-primary);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.file-tree-node__children {
+  padding: 0;
+  margin: 0;
+}
+
+.file-tree-node__empty {
+  font-size: 11px;
+  color: var(--text-muted);
+  height: 22px;
+  display: flex;
+  align-items: center;
+  list-style: none;
+  font-style: italic;
+}
+
+/* ── Context menu ──────────────────────────────────────────────────────────── */
+
+.ctx-menu {
+  position: fixed;
+  z-index: 9999;
+  min-width: 180px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  padding: 4px;
+  backdrop-filter: blur(8px);
+}
+
+.ctx-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-family: var(--font-stack);
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition), color var(--transition);
+}
+
+.ctx-menu__item:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}

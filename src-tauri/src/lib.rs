@@ -1,10 +1,11 @@
-/// AGY Studio — Tauri backend (Phase 4: AGY Integration)
+/// AGY Studio — Tauri backend (Phase 5: Workspace & Files)
 ///
 /// Commands:
-///   check_agy   — detect whether `agy` is installed
-///   send_to_agy — spawn an `agy` process, pipe the prompt, stream stdout
-///                 tokens back as Tauri events
-///   cancel_agy  — kill the running process
+///   check_agy      — detect whether `agy` is installed
+///   send_to_agy    — spawn an `agy` process, pipe the prompt, stream stdout
+///                    tokens back as Tauri events
+///   cancel_agy     — kill the running process
+///   read_directory — list one level of a directory, returning FileEntry items
 use std::path::Path;
 use std::process::Stdio;
 use std::sync::Mutex;
@@ -36,6 +37,20 @@ pub struct DonePayload {
 #[derive(Clone, Serialize)]
 pub struct ErrorPayload {
     pub message: String,
+}
+
+// ── File system types ─────────────────────────────────────────────────────────
+
+/// A single entry in a directory listing.
+#[derive(Clone, Serialize)]
+pub struct FileEntry {
+    pub name: String,
+    pub path: String,
+    pub is_dir: bool,
+    pub extension: Option<String>,
+    pub size: u64,
+    /// Present only for directories; `None` until expanded (lazy loading).
+    pub children: Option<Vec<FileEntry>>,
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -216,16 +231,78 @@ pub async fn cancel_agy(app: AppHandle, state: State<'_, AgyState>) -> Result<()
     Ok(())
 }
 
+/// Read one level of a directory. Subdirectories get `children: null` (not yet
+/// expanded); files get `children: null` always.
+#[tauri::command]
+pub fn read_directory(path: String) -> Result<Vec<FileEntry>, String> {
+    let dir = Path::new(&path);
+    if !dir.is_dir() {
+        return Err(format!("Not a directory: {path}"));
+    }
+
+    let read = std::fs::read_dir(dir).map_err(|e| format!("Cannot read dir: {e}"))?;
+
+    let mut entries: Vec<FileEntry> = read
+        .filter_map(|res| res.ok())
+        .filter_map(|entry| {
+            let file_name = entry.file_name();
+            let name = file_name.to_string_lossy().to_string();
+
+            // Skip hidden files/dirs (starting with .)
+            // Comment out this line to show hidden files too.
+            // if name.starts_with('.') { return None; }
+
+            let full_path = entry.path();
+            let path_str = full_path.to_string_lossy().to_string();
+
+            let metadata = entry.metadata().ok()?;
+            let is_dir = metadata.is_dir();
+            let size = if is_dir { 0 } else { metadata.len() };
+            let extension = if is_dir {
+                None
+            } else {
+                full_path
+                    .extension()
+                    .map(|e| e.to_string_lossy().to_string())
+            };
+
+            Some(FileEntry {
+                name,
+                path: path_str,
+                is_dir,
+                extension,
+                size,
+                children: None, // lazy: loaded on expand
+            })
+        })
+        .collect();
+
+    // Sort: directories first, then files; alphabetical within each group
+    entries.sort_by(|a, b| {
+        b.is_dir
+            .cmp(&a.is_dir)
+            .then_with(|| a.name.to_lowercase().cmp(&b.name.to_lowercase()))
+    });
+
+    Ok(entries)
+}
+
 // ── App entry point ───────────────────────────────────────────────────────────
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
         .manage(AgyState {
             child: Mutex::new(None),
         })
-        .invoke_handler(tauri::generate_handler![check_agy, send_to_agy, cancel_agy])
+        .invoke_handler(tauri::generate_handler![
+            check_agy,
+            send_to_agy,
+            cancel_agy,
+            read_directory
+        ])
         .run(tauri::generate_context!())
         .expect("error while running AGY Studio");
 }

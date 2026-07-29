@@ -1,0 +1,18 @@
+/* FileTree — tree container */
+
+.file-tree {
+  list-style: none;
+  padding: 4px 0;
+  margin: 0;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.file-tree__no-results {
+  padding: 24px 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  font-style: italic;
+}

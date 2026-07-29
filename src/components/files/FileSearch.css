@@ -1,0 +1,63 @@
+/* FileSearch — search bar */
+
+.file-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-secondary);
+  flex-shrink: 0;
+}
+
+.file-search__icon {
+  font-size: 11px;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.file-search__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: var(--font-stack);
+  outline: none;
+  padding: 2px 0;
+  min-width: 0;
+}
+
+.file-search__input::placeholder {
+  color: var(--text-muted);
+}
+
+.file-search__count {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  min-width: 20px;
+  text-align: right;
+}
+
+.file-search__clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 3px;
+  flex-shrink: 0;
+  transition: background var(--transition), color var(--transition);
+}
+
+.file-search__clear:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
