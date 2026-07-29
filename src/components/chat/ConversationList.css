@@ -1,0 +1,139 @@
+/* ConversationList — left sidebar panel */
+
+.conv-list {
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  min-width: 200px;
+  max-width: 280px;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────── */
+.conv-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.conv-list__title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.conv-list__new-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color var(--transition), background var(--transition), border-color var(--transition);
+}
+
+.conv-list__new-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.conv-list__new-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+  border-color: var(--border-strong);
+}
+
+/* ── List ────────────────────────────────────────────────────────────── */
+.conv-list__list {
+  flex: 1;
+  overflow-y: auto;
+  list-style: none;
+  padding: 6px 0;
+}
+
+/* ── Item ────────────────────────────────────────────────────────────── */
+.conv-list__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 14px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: background var(--transition), color var(--transition);
+}
+
+.conv-list__item:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.conv-list__item--active {
+  background: var(--bg-active);
+  color: var(--text-primary);
+}
+
+.conv-list__item--active .conv-list__item-title {
+  color: var(--accent-light);
+}
+
+.conv-list__item-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  opacity: 0.7;
+}
+
+.conv-list__item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.conv-list__item-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+
+.conv-list__item-title {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.conv-list__item-time {
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.conv-list__item-preview {
+  display: block;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}

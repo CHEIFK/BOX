@@ -1,0 +1,103 @@
+/* EmptyState — no conversation selected */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: 100%;
+  padding: 40px 32px;
+  text-align: center;
+  animation: fade-in 0.3s ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.empty-state__icon {
+  font-size: 36px;
+  color: var(--accent);
+  filter: drop-shadow(0 0 16px var(--accent-glow));
+  margin-bottom: 4px;
+  user-select: none;
+}
+
+.empty-state__heading {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.empty-state__sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  max-width: 360px;
+  line-height: 1.6;
+}
+
+.empty-state__new-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background var(--transition), box-shadow var(--transition);
+}
+
+.empty-state__new-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.empty-state__new-btn:hover {
+  background: var(--accent-light);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.empty-state__suggestions {
+  margin-top: 10px;
+  max-width: 480px;
+}
+
+.empty-state__suggestions-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.empty-state__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.empty-state__chip {
+  padding: 6px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+
+.empty-state__chip:hover {
+  color: var(--text-primary);
+  border-color: var(--accent);
+  background: var(--bg-active);
+}

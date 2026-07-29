@@ -1,0 +1,134 @@
+/* ChatInput — message compose area */
+
+.chat-input {
+  flex-shrink: 0;
+  padding: 12px 20px 10px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+/* ── Wrapper ─────────────────────────────────────────────────────────── */
+.chat-input__wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 8px 10px 8px 14px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.chat-input__wrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* ── Textarea ────────────────────────────────────────────────────────── */
+.chat-input__textarea {
+  flex: 1;
+  min-height: 22px;
+  max-height: 200px;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: var(--font-stack);
+  font-size: 13.5px;
+  color: var(--text-primary);
+  line-height: 1.55;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.chat-input__textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.chat-input__textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Action buttons ──────────────────────────────────────────────────── */
+.chat-input__actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Send button */
+.chat-input__send-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  transition: background var(--transition), box-shadow var(--transition);
+}
+
+.chat-input__send-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.chat-input__send-btn:hover:not(:disabled) {
+  background: var(--accent-light);
+  box-shadow: 0 0 14px var(--accent-glow);
+}
+
+.chat-input__send-btn--disabled,
+.chat-input__send-btn:disabled {
+  background: rgba(108, 92, 231, 0.25);
+  color: rgba(255, 255, 255, 0.3);
+  cursor: not-allowed;
+}
+
+/* Stop button */
+.chat-input__stop-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--status-error);
+  background: rgba(245, 101, 101, 0.1);
+  color: var(--status-error);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition), box-shadow var(--transition);
+}
+
+.chat-input__stop-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.chat-input__stop-btn:hover {
+  background: rgba(245, 101, 101, 0.2);
+  box-shadow: 0 0 10px rgba(245, 101, 101, 0.2);
+}
+
+/* ── Hint ────────────────────────────────────────────────────────────── */
+.chat-input__hint {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.chat-input__hint kbd {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 1px 4px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-secondary);
+}

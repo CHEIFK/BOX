@@ -1,0 +1,67 @@
+/* CodeBlock — syntax highlighted code with copy button */
+
+.code-block {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 8px 0;
+}
+
+/* ── Header bar ──────────────────────────────────────────────────────── */
+.code-block__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px 5px 14px;
+  background: #111120;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.code-block__lang {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: lowercase;
+}
+
+/* ── Copy button ─────────────────────────────────────────────────────── */
+.code-block__copy {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+
+.code-block__copy svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.code-block__copy:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+  background: var(--bg-hover);
+}
+
+.code-block__copy--done {
+  color: var(--status-ok);
+  border-color: rgba(0, 214, 143, 0.3);
+}
+
+.code-block__copy--done:hover {
+  color: var(--status-ok);
+  border-color: rgba(0, 214, 143, 0.4);
+  background: rgba(0, 214, 143, 0.05);
+}
+
+.code-block__copy-label {
+  font-family: var(--font-stack);
+}
