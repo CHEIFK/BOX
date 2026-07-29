@@ -1,0 +1,80 @@
+/* EditorTab.css */
+.editor-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px 0 12px;
+  height: 35px;
+  min-width: 80px;
+  max-width: 180px;
+  cursor: pointer;
+  border-right: 1px solid #2d2d2d;
+  background: #2d2d2d;
+  color: #8a8a8a;
+  font-size: 0.82rem;
+  user-select: none;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.1s, color 0.1s;
+  white-space: nowrap;
+}
+
+.editor-tab:hover {
+  background: #333;
+  color: #ccc;
+}
+
+.editor-tab--active {
+  background: #1e1e1e;
+  color: #e0e0e0;
+  border-bottom: 1px solid #1e1e1e;
+}
+
+.editor-tab--active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #0e84d6;
+}
+
+.editor-tab__dirty-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e2a55b;
+  flex-shrink: 0;
+}
+
+.editor-tab__name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.editor-tab__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 1rem;
+  line-height: 1;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background 0.1s, color 0.1s;
+}
+
+.editor-tab__close:hover {
+  background: #4a4a4a;
+  color: #e0e0e0;
+}

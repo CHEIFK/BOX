@@ -1,0 +1,10 @@
+/* EditorPage.css */
+.editor-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  background: #1e1e1e;
+  overflow: hidden;
+}

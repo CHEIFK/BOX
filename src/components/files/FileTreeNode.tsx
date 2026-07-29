@@ -2,6 +2,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { FileEntry } from '../../services/fileService';
 import { copyToClipboard, revealInFileManager } from '../../services/fileService';
+import { useContext } from 'react';
+import { EditorContext } from '../../contexts/EditorContext';
+import { readFile } from '../../services/editorService';
 import './FileTreeNode.css';
 
 // ── File icon map ─────────────────────────────────────────────────────────────
@@ -133,6 +136,7 @@ export default function FileTreeNode({
   const [children, setChildren] = useState<FileEntry[] | null>(entry.children);
   const [loading, setLoading] = useState(false);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const editorCtx = useContext(EditorContext);
 
   // Collapse when a new search query arrives
   useEffect(() => {
@@ -142,7 +146,18 @@ export default function FileTreeNode({
   }, [searchQuery]);
 
   const handleToggle = useCallback(async () => {
-    if (!entry.is_dir) return;
+    if (!entry.is_dir) {
+      // Open file in editor
+      if (editorCtx) {
+        try {
+          const content = await readFile(entry.path);
+          editorCtx.openFile(entry.path, content);
+        } catch (e) {
+          console.error('Failed to open file:', e);
+        }
+      }
+      return;
+    }
     const nextExpanded = !expanded;
     setExpanded(nextExpanded);
 
@@ -155,7 +170,7 @@ export default function FileTreeNode({
         setLoading(false);
       }
     }
-  }, [entry.is_dir, entry.path, expanded, children, loading, onExpand]);
+  }, [entry.is_dir, entry.path, expanded, children, loading, onExpand, editorCtx]);
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();

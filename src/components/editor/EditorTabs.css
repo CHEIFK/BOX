@@ -1,0 +1,25 @@
+/* EditorTabs.css */
+.editor-tabs {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: #252526;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #252526;
+}
+
+.editor-tabs::-webkit-scrollbar {
+  height: 4px;
+}
+
+.editor-tabs::-webkit-scrollbar-track {
+  background: #252526;
+}
+
+.editor-tabs::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 2px;
+}

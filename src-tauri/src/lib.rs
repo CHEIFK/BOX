@@ -231,6 +231,19 @@ pub async fn cancel_agy(app: AppHandle, state: State<'_, AgyState>) -> Result<()
     Ok(())
 }
 
+/// Read a file from disk as a UTF-8 string.
+#[tauri::command]
+pub fn read_file(path: String) -> Result<String, String> {
+    std::fs::read_to_string(&path).map_err(|e| format!("Cannot read file '{path}': {e}"))
+}
+
+/// Write a UTF-8 string to a file on disk.
+#[tauri::command]
+pub fn write_file(path: String, content: String) -> Result<(), String> {
+    std::fs::write(&path, content.as_bytes())
+        .map_err(|e| format!("Cannot write file '{path}': {e}"))
+}
+
 /// Read one level of a directory. Subdirectories get `children: null` (not yet
 /// expanded); files get `children: null` always.
 #[tauri::command]
@@ -301,7 +314,9 @@ pub fn run() {
             check_agy,
             send_to_agy,
             cancel_agy,
-            read_directory
+            read_directory,
+            read_file,
+            write_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running AGY Studio");

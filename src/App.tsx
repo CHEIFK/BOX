@@ -7,10 +7,14 @@ import EditorPage   from './pages/EditorPage';
 import TerminalPage from './pages/TerminalPage';
 import SettingsPage from './pages/SettingsPage';
 import { AgyProvider } from './contexts/AgyContext';
+import { EditorContext } from './contexts/EditorContext';
+import { useEditor } from './hooks/useEditor';
 
-export default function App() {
+function AppWithEditor() {
+  const editorState = useEditor();
+
   return (
-    <AgyProvider>
+    <EditorContext.Provider value={editorState}>
       <MemoryRouter initialEntries={['/chat']}>
         <Routes>
           <Route element={<AppLayout />}>
@@ -23,6 +27,14 @@ export default function App() {
           </Route>
         </Routes>
       </MemoryRouter>
+    </EditorContext.Provider>
+  );
+}
+
+export default function App() {
+  return (
+    <AgyProvider>
+      <AppWithEditor />
     </AgyProvider>
   );
 }
