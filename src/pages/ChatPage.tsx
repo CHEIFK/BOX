@@ -1,4 +1,4 @@
-/** ChatPage — Phase 3 production Chat UI (no backend, mock data) */
+/** ChatPage — Phase 4: connected to AGY via AgyContext / agyService */
 import { useState, useCallback, useRef } from 'react';
 import type { Conversation, Message } from '../components/chat/types';
 import { MOCK_CONVERSATIONS } from '../components/chat/mockData';
@@ -6,65 +6,42 @@ import ConversationList from '../components/chat/ConversationList';
 import MessageList from '../components/chat/MessageList';
 import ChatInput from '../components/chat/ChatInput';
 import EmptyState from '../components/chat/EmptyState';
+import { useAgy } from '../contexts/AgyContext';
 import './ChatPage.css';
-
-/* Simulate an assistant reply after a short delay */
-const MOCK_REPLIES: string[] = [
-  `That's a great question! Here's a quick overview:
-
-\`\`\`typescript
-// Example TypeScript snippet
-function greet(name: string): string {
-  return \`Hello, \${name}!\`;
-}
-
-console.log(greet('World'));
-\`\`\`
-
-Let me know if you'd like more detail on any part of this.`,
-
-  `Sure, I can help with that. The key thing to understand is the **lifecycle**:
-
-1. Initialise state
-2. Render the component
-3. Commit to the DOM
-4. Run effects
-
-> **Note:** Effects run *after* the commit phase, not during render.`,
-
-  `Here's a concise answer:
-
-| Approach | Pros | Cons |
-|----------|------|------|
-| Option A | Fast, simple | Limited flexibility |
-| Option B | Flexible | More complex |
-| Option C | Best of both | Requires setup |
-
-I'd generally recommend **Option B** for production use.`,
-];
-
-let mockReplyIndex = 0;
-function getNextMockReply(): string {
-  const reply = MOCK_REPLIES[mockReplyIndex % MOCK_REPLIES.length];
-  mockReplyIndex += 1;
-  return reply;
-}
 
 function createId(): string {
   return Math.random().toString(36).slice(2, 10);
 }
 
 export default function ChatPage() {
+  const { startChat, cancelChat, isRunning } = useAgy();
+
   const [conversations, setConversations] = useState<Conversation[]>(MOCK_CONVERSATIONS);
   const [activeId, setActiveId] = useState<string | null>(MOCK_CONVERSATIONS[0].id);
   const [inputValue, setInputValue] = useState('');
-  const [isStreaming, setIsStreaming] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const streamingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ID of the assistant message currently being streamed into
+  const streamingMsgId = useRef<string | null>(null);
 
   const activeConversation = conversations.find(c => c.id === activeId) ?? null;
 
-  /* ── Create new conversation ──────────────────────────────────────── */
+  // ── Helpers ────────────────────────────────────────────────────────────────
+
+  const appendToAssistantMessage = useCallback((msgId: string, token: string) => {
+    setConversations(prev => prev.map(conv => {
+      if (conv.id !== activeId) return conv;
+      return {
+        ...conv,
+        messages: conv.messages.map(m =>
+          m.id === msgId ? { ...m, content: m.content + token } : m,
+        ),
+      };
+    }));
+  }, [activeId]);
+
+  // ── Create new conversation ────────────────────────────────────────────────
+
   const handleNew = useCallback(() => {
     const newConv: Conversation = {
       id: createId(),
@@ -78,10 +55,11 @@ export default function ChatPage() {
     setInputValue('');
   }, []);
 
-  /* ── Send message ─────────────────────────────────────────────────── */
-  const handleSend = useCallback(() => {
+  // ── Send message ───────────────────────────────────────────────────────────
+
+  const handleSend = useCallback(async () => {
     const text = inputValue.trim();
-    if (!text || isStreaming) return;
+    if (!text || isRunning) return;
 
     const userMsg: Message = {
       id: createId(),
@@ -93,74 +71,116 @@ export default function ChatPage() {
     setInputValue('');
     setIsLoading(true);
 
+    // Capture activeId in a local const so callbacks close over it
+    const convId = activeId;
+
+    // Add user message and (optimistically) prepare for the assistant bubble
     setConversations(prev => prev.map(conv => {
-      if (conv.id !== activeId) return conv;
-      const updatedMessages = [...conv.messages, userMsg];
+      if (conv.id !== convId) return conv;
       return {
         ...conv,
-        messages: updatedMessages,
+        messages: [...conv.messages, userMsg],
         lastMessage: text.slice(0, 80),
         updatedAt: new Date(),
-        // Update title from first user message if it's still the default
         title: conv.title === 'New conversation'
           ? text.slice(0, 40) + (text.length > 40 ? '…' : '')
           : conv.title,
       };
     }));
 
-    // Mock streaming: show loading for 1.2s then show reply for 2s
-    const loadingTimer = setTimeout(() => {
-      setIsLoading(false);
-      setIsStreaming(true);
+    const assistantMsgId = createId();
 
-      const reply = getNextMockReply();
-      const assistantMsg: Message = {
+    // Token callback — first token transitions loading→streaming
+    const handleToken = (token: string) => {
+      if (isLoading || streamingMsgId.current === null) {
+        // First token: add the assistant bubble and stop loading spinner
+        setIsLoading(false);
+        streamingMsgId.current = assistantMsgId;
+
+        const assistantMsg: Message = {
+          id: assistantMsgId,
+          role: 'assistant',
+          content: token,
+          timestamp: new Date(),
+        };
+
+        setConversations(prev => prev.map(conv => {
+          if (conv.id !== convId) return conv;
+          return {
+            ...conv,
+            messages: [...conv.messages, assistantMsg],
+            lastMessage: token.slice(0, 80).replace(/[#`*\n]/g, ' '),
+            updatedAt: new Date(),
+          };
+        }));
+      } else {
+        // Subsequent tokens: append to existing bubble
+        appendToAssistantMessage(assistantMsgId, token);
+      }
+    };
+
+    const handleDone = (_exitCode: number | null) => {
+      setIsLoading(false);
+      streamingMsgId.current = null;
+      // Update lastMessage from the completed assistant content
+      setConversations(prev => prev.map(conv => {
+        if (conv.id !== convId) return conv;
+        const last = conv.messages[conv.messages.length - 1];
+        if (!last || last.role !== 'assistant') return conv;
+        return {
+          ...conv,
+          lastMessage: last.content.slice(0, 80).replace(/[#`*\n]/g, ' '),
+        };
+      }));
+    };
+
+    const handleError = (msg: string) => {
+      setIsLoading(false);
+      streamingMsgId.current = null;
+
+      const errorMsg: Message = {
         id: createId(),
         role: 'assistant',
-        content: reply,
+        content: `⚠️ **Error:** ${msg}`,
         timestamp: new Date(),
       };
 
       setConversations(prev => prev.map(conv => {
-        if (conv.id !== activeId) return conv;
+        if (conv.id !== convId) return conv;
         return {
           ...conv,
-          messages: [...conv.messages, assistantMsg],
-          lastMessage: reply.slice(0, 80).replace(/[#`*\n]/g, ' '),
+          messages: [...conv.messages, errorMsg],
+          lastMessage: `Error: ${msg.slice(0, 60)}`,
           updatedAt: new Date(),
         };
       }));
+    };
 
-      // Streaming "finishes" after 2s
-      streamingTimerRef.current = setTimeout(() => {
-        setIsStreaming(false);
-      }, 2000);
-    }, 1200);
+    await startChat(text, handleToken, handleDone, handleError);
+  }, [inputValue, isRunning, activeId, isLoading, startChat, appendToAssistantMessage]);
 
-    // Cleanup on unmount — store in ref
-    streamingTimerRef.current = loadingTimer;
-  }, [inputValue, isStreaming, activeId]);
+  // ── Stop streaming ─────────────────────────────────────────────────────────
 
-  /* ── Stop streaming ───────────────────────────────────────────────── */
-  const handleStop = useCallback(() => {
-    if (streamingTimerRef.current) {
-      clearTimeout(streamingTimerRef.current);
-    }
-    setIsStreaming(false);
+  const handleStop = useCallback(async () => {
+    await cancelChat();
     setIsLoading(false);
-  }, []);
+    streamingMsgId.current = null;
+  }, [cancelChat]);
 
-  /* ── Select conversation ──────────────────────────────────────────── */
-  const handleSelect = useCallback((id: string) => {
+  // ── Select conversation ────────────────────────────────────────────────────
+
+  const handleSelect = useCallback(async (id: string) => {
     setActiveId(id);
     setInputValue('');
-    // Stop any ongoing mock stream when switching
-    if (streamingTimerRef.current) {
-      clearTimeout(streamingTimerRef.current);
+    // Cancel any in-progress generation when switching conversations
+    if (isRunning) {
+      await cancelChat();
     }
-    setIsStreaming(false);
     setIsLoading(false);
-  }, []);
+    streamingMsgId.current = null;
+  }, [isRunning, cancelChat]);
+
+  // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
     <div className="chat-page">
@@ -196,7 +216,7 @@ export default function ChatPage() {
               onChange={setInputValue}
               onSend={handleSend}
               onStop={handleStop}
-              isStreaming={isStreaming}
+              isStreaming={isRunning}
               disabled={false}
             />
           </>

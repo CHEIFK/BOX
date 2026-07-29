@@ -6,20 +6,23 @@ import FilesPage    from './pages/FilesPage';
 import EditorPage   from './pages/EditorPage';
 import TerminalPage from './pages/TerminalPage';
 import SettingsPage from './pages/SettingsPage';
+import { AgyProvider } from './contexts/AgyContext';
 
 export default function App() {
   return (
-    <MemoryRouter initialEntries={['/chat']}>
-      <Routes>
-        <Route element={<AppLayout />}>
-          <Route index element={<Navigate to="/chat" replace />} />
-          <Route path="/chat"     element={<ChatPage />} />
-          <Route path="/files"    element={<FilesPage />} />
-          <Route path="/editor"   element={<EditorPage />} />
-          <Route path="/terminal" element={<TerminalPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-        </Route>
-      </Routes>
-    </MemoryRouter>
+    <AgyProvider>
+      <MemoryRouter initialEntries={['/chat']}>
+        <Routes>
+          <Route element={<AppLayout />}>
+            <Route index element={<Navigate to="/chat" replace />} />
+            <Route path="/chat"     element={<ChatPage />} />
+            <Route path="/files"    element={<FilesPage />} />
+            <Route path="/editor"   element={<EditorPage />} />
+            <Route path="/terminal" element={<TerminalPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </AgyProvider>
   );
 }

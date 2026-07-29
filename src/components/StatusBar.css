@@ -43,8 +43,22 @@
   flex-shrink: 0;
 }
 
-.statusbar__dot--warn  { background: var(--status-warn); }
-.statusbar__dot--error { background: var(--status-error); }
+.statusbar__dot--warn     { background: var(--status-warn); }
+.statusbar__dot--error    { background: var(--status-error); }
+.statusbar__dot--connected { background: var(--status-ok); }
+.statusbar__dot--checking {
+  background: var(--status-warn);
+  animation: statusbar-pulse 1.2s ease-in-out infinite;
+}
+.statusbar__dot--running {
+  background: #60c8ff;
+  animation: statusbar-pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes statusbar-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
 
 .statusbar__divider {
   width: 1px;
