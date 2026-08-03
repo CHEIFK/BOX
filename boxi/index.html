@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previous Year Question Papers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <header class="header">
+            <h1>Previous Year Question Papers</h1>
+            <p class="subtitle">Access question papers from previous sessions to prepare effectively.</p>
+        </header>
+
+        <div class="search-container">
+            <label for="search" class="visually-hidden">Search years</label>
+            <input 
+                type="text" 
+                id="search" 
+                class="search-box" 
+                placeholder="Search years..."
+                aria-label="Search years"
+            >
+        </div>
+
+        <div id="cards-container" class="cards-grid" role="list">
+            <!-- Cards will be dynamically inserted here by JavaScript -->
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
