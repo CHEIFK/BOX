@@ -110,7 +110,7 @@ fn which_agy() -> Option<()> {
 // ── Tauri commands — AGY ──────────────────────────────────────────────────────
 
 #[tauri::command]
-pub async fn check_agy() -> serde_json::Value {
+async fn check_agy() -> serde_json::Value {
     match find_agy() {
         Some(path) => serde_json::json!({ "installed": true, "path": path }),
         None => serde_json::json!({ "installed": false }),
@@ -118,7 +118,7 @@ pub async fn check_agy() -> serde_json::Value {
 }
 
 #[tauri::command]
-pub async fn send_to_agy(
+async fn send_to_agy(
     app: AppHandle,
     state: State<'_, AgyState>,
     prompt: String,
@@ -197,7 +197,8 @@ pub async fn send_to_agy(
 
         // Reap child: take it out while holding the lock, then wait outside.
         let maybe_child = {
-            let mut guard = match app2.state::<AgyState>().child.lock() {
+            let state = app2.state::<AgyState>();
+            let mut guard = match state.child.lock() {
                 Ok(g) => g,
                 Err(_) => {
                     let _ = app2.emit("agy://done", DonePayload { exit_code: None });
@@ -221,7 +222,7 @@ pub async fn send_to_agy(
 }
 
 #[tauri::command]
-pub async fn cancel_agy(app: AppHandle, state: State<'_, AgyState>) -> Result<(), String> {
+async fn cancel_agy(app: AppHandle, state: State<'_, AgyState>) -> Result<(), String> {
     // Take the child while holding the lock, then kill outside the lock.
     let maybe_child = {
         let mut guard = state.child.lock().map_err(|e| e.to_string())?;
@@ -244,18 +245,18 @@ pub async fn cancel_agy(app: AppHandle, state: State<'_, AgyState>) -> Result<()
 }
 
 #[tauri::command]
-pub fn read_file(path: String) -> Result<String, String> {
+fn read_file(path: String) -> Result<String, String> {
     std::fs::read_to_string(&path).map_err(|e| format!("Cannot read file '{path}': {e}"))
 }
 
 #[tauri::command]
-pub fn write_file(path: String, content: String) -> Result<(), String> {
+fn write_file(path: String, content: String) -> Result<(), String> {
     std::fs::write(&path, content.as_bytes())
         .map_err(|e| format!("Cannot write file '{path}': {e}"))
 }
 
 #[tauri::command]
-pub fn read_directory(path: String) -> Result<Vec<FileEntry>, String> {
+fn read_directory(path: String) -> Result<Vec<FileEntry>, String> {
     let dir = Path::new(&path);
     if !dir.is_dir() {
         return Err(format!("Not a directory: {path}"));
@@ -302,7 +303,7 @@ pub fn read_directory(path: String) -> Result<Vec<FileEntry>, String> {
 /// Output is streamed as `terminal://output/{id}` events.
 /// Shell exit is signalled by `terminal://exit/{id}`.
 #[tauri::command]
-pub async fn spawn_shell(
+async fn spawn_shell(
     app: AppHandle,
     state: State<'_, TerminalState>,
     id: String,
@@ -423,7 +424,7 @@ pub async fn spawn_shell(
 
 /// Write data to a terminal's stdin.
 #[tauri::command]
-pub async fn write_to_terminal(
+async fn write_to_terminal(
     state: State<'_, TerminalState>,
     id: String,
     data: String,
@@ -439,7 +440,7 @@ pub async fn write_to_terminal(
 
 /// Resize stub — PTY resize requires portable-pty.
 #[tauri::command]
-pub async fn resize_terminal(
+async fn resize_terminal(
     _state: State<'_, TerminalState>,
     _id: String,
     _cols: u16,
@@ -450,7 +451,7 @@ pub async fn resize_terminal(
 
 /// Kill the bash process for a terminal tab.
 #[tauri::command]
-pub async fn close_terminal(
+async fn close_terminal(
     state: State<'_, TerminalState>,
     id: String,
 ) -> Result<(), String> {
